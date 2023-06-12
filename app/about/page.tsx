@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import {
   GitHubIcon,
-  YoutubeIcon,
   ArrowIcon,
   TwitterIcon,
 } from 'components/icons';
