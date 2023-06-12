@@ -20,26 +20,19 @@ export default function AboutPage() {
       </p>
       <div className="prose prose-neutral dark:prose-invert text-neutral-800 dark:text-neutral-200">
         <p>
-          I'm currently the Head of Machine Learning at <b>Orbital Materials</b>, where I
+          I'm currently the Head of Machine Learning at {` `}
+          <a href="https://orbitalmaterials.com/" target="_blank" rel="noopener noreferrer"><b>Orbital Materials</b></a>
+          , where I
           lead our foundation model development for materials science. 
         </p>
         <hr/>
         <p>
-          Outside of optimizing large neural networks, i'm interested in
-          cooking, making tables and riding bicycles. 
-        </p>
-        <p>
-          I <b>love</b> building for the web. From something as simple as a
-          single HTML file – all the way to large Next.js applications. The web
-          is incredible. Anyone can become a developer, writer, or creator – and
-          no one has to ask for permission. You can just build.
+          When i'm not optimizing large neural networks, I love 
+          cooking, playing Go, making wooden tables and riding steel-framed bicycles. 
         </p>
         <p className="mb-8">
-          Outside of Vercel, I <b>angel invest</b> in developer tools companies
-          and <b>advise early-stage startups</b>. I also do Developer Relations
-          consulting work, helping companies take their DevRel function from 0
-          to 1, or provide guidance on growing communities, content creation,
-          and developer marketing.
+          Outside of Orbital Materials, I occasionally advise for startups,
+          helping companies improve their Machine Learning function.
         </p>
         <div className="flex flex-col gap-2 md:flex-row md:gap-2">
           <a
