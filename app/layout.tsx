@@ -14,18 +14,18 @@ const kaisei = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Lee Robinson',
-    template: '%s | Lee Robinson',
+    default: 'Mark Neumann',
+    template: '%s | Mark Neumann',
   },
-  description: 'Developer, writer, and creator.',
+  description: 'Researcher, Engineer.',
   openGraph: {
-    title: 'Lee Robinson',
-    description: 'Developer, writer, and creator.',
-    url: 'https://leerob.io',
-    siteName: 'Lee Robinson',
+    title: 'Mark Neumann',
+    description: 'Researcher and Engineer.',
+    url: 'https://markneumann.xyz',
+    siteName: 'Mark Neumann',
     images: [
       {
-        url: 'https://leerob.io/og.jpg',
+        url: 'https://markneumann.xyz/og.jpg',
         width: 1920,
         height: 1080,
       },
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: 'Lee Robinson',
+    title: 'Mark Neumann',
     card: 'summary_large_image',
   },
   icons: {

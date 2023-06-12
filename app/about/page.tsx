@@ -16,20 +16,17 @@ export default function AboutPage() {
     <section>
       <h1 className="font-bold text-3xl font-serif">About Me</h1>
       <p className="my-5 text-neutral-800 dark:text-neutral-200">
-        Hey, I'm Lee. Most folks know me as <b>leerob</b> online.
+        Hey, I'm Mark.
       </p>
       <div className="prose prose-neutral dark:prose-invert text-neutral-800 dark:text-neutral-200">
         <p>
-          I'm currently the <b>VP of Developer Experience at Vercel</b>, where I
-          lead our Developer Relations and Documentation teams. I focus on{' '}
-          <b>educating and growing</b> the Vercel and Next.js communities.
+          I'm currently the Head of Machine Learning at <b>Orbital Materials</b>, where I
+          lead our foundation model development for materials science. 
         </p>
-        <hr />
+        <hr/>
         <p>
-          I'm passionate about many creative pursuits, including music,
-          photography, videography, and of course, coding. This combination of
-          interests is what ultimately led me to my current role in building
-          developer communities.
+          Outside of optimizing large neural networks, i'm interested in
+          cooking, making tables and riding bicycles. 
         </p>
         <p>
           I <b>love</b> building for the web. From something as simple as a
@@ -48,7 +45,7 @@ export default function AboutPage() {
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://twitter.com/leeerob"
+            href="https://twitter.com/markneumannnn"
             className="flex w-full border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 no-underline items-center text-neutral-800 dark:text-neutral-200 hover:dark:bg-neutral-900 hover:bg-neutral-100 transition-all justify-between"
           >
             <div className="flex items-center">
@@ -60,7 +57,7 @@ export default function AboutPage() {
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://github.com/leerob"
+            href="https://github.com/deneutoy"
             className="flex w-full border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 no-underline items-center text-neutral-800 dark:text-neutral-200 hover:dark:bg-neutral-900 hover:bg-neutral-100 transition-all justify-between"
           >
             <div className="flex items-center">
@@ -69,18 +66,7 @@ export default function AboutPage() {
             </div>
             <ArrowIcon />
           </a>
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://www.youtube.com/@leerob"
-            className="flex w-full border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 no-underline items-center text-neutral-800 dark:text-neutral-200 hover:dark:bg-neutral-900 hover:bg-neutral-100 transition-all justify-between"
-          >
-            <div className="flex items-center">
-              <YoutubeIcon />
-              <div className="ml-3">YouTube</div>
-            </div>
-            <ArrowIcon />
-          </a>
+
         </div>
       </div>
     </section>

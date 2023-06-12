@@ -2,9 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Mdx } from 'components/mdx';
 import { allBlogs } from 'contentlayer/generated';
-import { getTweets } from 'lib/twitter';
 import Balancer from 'react-wrap-balancer';
-import ViewCounter from '../view-counter';
 
 export async function generateStaticParams() {
   return allBlogs.map((post) => ({
@@ -28,8 +26,8 @@ export async function generateMetadata({
     slug,
   } = post;
   const ogImage = image
-    ? `https://leerob.io${image}`
-    : `https://leerob.io/api/og?title=${title}`;
+    ? `https://markneumann.xyz${image}`
+    : `https://markneumann.xyz/api/og?title=${title}`;
 
   return {
     title,
@@ -39,7 +37,7 @@ export async function generateMetadata({
       description,
       type: 'article',
       publishedTime,
-      url: `https://leerob.io/blog/${slug}`,
+      url: `https://markneumann.xyz/blog/${slug}`,
       images: [
         {
           url: ogImage,
@@ -62,7 +60,6 @@ export default async function Blog({ params }) {
     notFound();
   }
 
-  const tweets = await getTweets(post.tweetIds);
 
   return (
     <section>
@@ -77,9 +74,8 @@ export default async function Blog({ params }) {
           {post.publishedAt}
         </div>
         <div className="h-[0.2em] bg-neutral-50 dark:bg-neutral-800 mx-2" />
-        <ViewCounter slug={post.slug} trackView />
       </div>
-      <Mdx code={post.body.code} tweets={tweets} />
+      <Mdx code={post.body.code}/>
     </section>
   );
 }
