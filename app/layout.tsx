@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: 'https://markneumann.xyz/og.jpg',
-        width: 1920,
-        height: 1080,
+        width: 400,
+        height: 400,
       },
     ],
     locale: 'en-US',
@@ -50,10 +50,6 @@ export const metadata: Metadata = {
   },
   icons: {
     shortcut: '/favicon.ico',
-  },
-  verification: {
-    google: 'eZSdmzAXlLkKhNJzfgwDqWORghxnJ8qR9_CHdAh5-xw',
-    yandex: '14d2e73487fa6c71',
   },
 };
 
