@@ -7,7 +7,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'VP of Developer Experience at Vercel.',
+  description: 'Head of ML at Orbital Materials',
 };
 
 export default function AboutPage() {
