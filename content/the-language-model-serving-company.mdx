@@ -18,7 +18,7 @@ _If you are not already familiar with [Vercel](https://vercel.com), they are a P
 
 Vercel differentiates itself from the large cloud providers by ease of use, and then makes money by selling high margin, value-add features which are almost guaranteed to be used as companies scale web-facing applications (KV stores, databases, CDNs). In particular, they are not interested in vertical integration, in the sense of owning their own hardware. Why?
 
-Vercel depends on globally distributed CPU servers to provide their high performance SSR serving cache. The "minimumm viable infrastructure" for their SSR feature would be a full, global network of datacenters, so  the capital cost of replicating this functionality with their own infrastructure makes this almost impossible.
+Vercel depends on globally distributed CPU servers to provide their [high performance SSR serving cache](https://vercel.com/docs/edge-network/caching). The "minimumm viable infrastructure" for their SSR feature would be a full, global network of datacenters, so  the capital cost of replicating this functionality with their own infrastructure makes this almost impossible.
 
 Similarly, this provides little incentive to the cloud providers to compete with them, as they are specialized in different areas, and Vercel _cannot_ compete on operating cost for running CPU instances with GCP/AWS etc, because of their scale, and the difficulty and non-homogenous nature of providing general purpose compute (different machine types, storage, etc). The cloud providers still get their piece of the pie.
 
@@ -42,8 +42,7 @@ This standardisation in client code and access patterns looks similar to React e
 
 This means there is almost an anti network effect for LLM serving APIs - users discover alternatives via API aggregators, and then switch to the cheapest/best one. This happens for 2 key reasons - LLMs have the simplest IO of any new technology in history, and they are also (currently) completely stateless.  This is not the case for React frameworks, where the network effect is positive - if library developers make plugins for your framework, they are unlikely to be developed for other frameworks as well.
 
-This is one of the strongest arguments for an OSS model strategy. Mistral's models will proliferate, and companies will run them themselves instead of via Mistral's API. This involves a more substantial investment (time and code) than calling an API, which gives Mistral an edge in retaining users, as well as filtering low value users, as they will likely take the easier route of API usage. Whether they can find services or new models which those users would pay for is another question.
-
+This is one of the strongest arguments for an OSS model strategy. [Mistral's Apache 2.0 licensed models will proliferate](https://mistral.ai/news/announcing-mistral-7b/), and companies will run them themselves instead of via Mistral's API. This involves a more substantial investment (time and code) than calling an API, which gives Mistral an edge in retaining users, as well as filtering low value users, as they will likely take the easier route of API usage. Whether they can find services or new models which those users would pay for is another question.
 
 Although there are some companies that are providing these developer products for LLM APIs (e.g Replicate), these companies typically focus on APIs and deployment rather than developer experience. Of course, this is a prerequisite to many of the additional features one can imagine building into a developer product for LLMs in production (logging, monitoring etc). 
 
@@ -60,8 +59,14 @@ Determining the best wedge for LLMs is an interesting question, because the sepa
 If LLM serving is becoming commoditized, how can a "Vercel of LLMs" provide services which create value? Here are some predictions/ideas:
 
 #### Structured generation
-LLMs are crying out for structured generation, and there are several open source libraries which accomodate this, either through function calling APIs or grammar based generation.
+LLMs are crying out for structured generation, and there are several open source libraries which accomodate this, either through function calling APIs or grammar based generation. The standout options include:
 
+- [Outlines](https://github.com/outlines-dev/outlines), from parent company [.txt](https://dottxt.co/)
+- [Instructor](https://github.com/jxnl/instructor)
+- [Jsonformer](https://github.com/1rgs/jsonformer)
+- [llama.cpp](https://github.com/ggerganov/llama.cpp?tab=readme-ov-file#constrained-output-with-grammars)
+
+When combined with [tools which produce GBNF grammars from typescript interfaces](https://grammar.intrinsiclabs.ai/), this becomes very powerful. One could imagine deploying source code which defines a typescript interface/Pydantic model by converting it to a grammar and automatically deploying structured LLM endpoints based on the generated grammars, similar to Vercel's serverless function deployments.
 
 #### APIs with integrated search
 The LLM startup with the most compelling B2C product (discounting Cohere/Anthropic etc) currently seems to be [Perplexity](https://perplexity.ai), who's focus is integrating search into LLMs at a large scale. Retrieval Augmented Generation (RAG) adds complexity to LLM serving requirements and suddenly adds a layer of statefulness and customization to deployed applications.
@@ -86,6 +91,8 @@ Some API providers already provide function calling APIs, but these are extremel
 Developing locally with LLMs is quite painful - the APIs are expensive, and running models locally is hard; difficult to install, computationally expensive to run, not particularly stable software. You want caching, key use statistics, you want to log your test generations, you want to test streaming responses etc etc. Simon Willison's [llm](https://github.com/simonw/llm) is in the right direction, but there's plenty of room for improvement here. The way NextJS makes running backend functions locally easy is a good example of how this could be done.
 
 
+#### Security and Prompt Injection
+
 #### Federated Finetuning
 
 #### Evaluation
@@ -101,7 +108,7 @@ A key differentiator with LLMs is the ease of improving a model simply by having
 I think a key value proposition for a "Vercel for LLMs" might be to solve several pieces of this at once, creating an "off the shelf" solution for feedback loops. This would involve:
 
 - Logging hooks for existing LLM serving frameworks 
-- A javascript LLM analytics library, allowing users to define "events" which correspond to finetuning signals, tied to generations
+- A javascript LLM analytics library, allowing users to define "events" which correspond to finetuning signals, tied to model generations
 - Evaluation and filtering tools for reviewing collected data 
 
 I have not seen a convincing version of this "Flywheel" for production systems. Pieces of it exist, but without being focused at LLMs singularly.
@@ -118,4 +125,4 @@ However, there is another set of analysis techniques that only really apply to t
 
 #### Looking forward
 
-Some of the features here do require direct access to models to be implemented. But I think the majority of them can be abstracted until LLM serving is cheap enough to be run on commodity hardware. Anyway, lots of exciting stuff to build!
+Some of the features here do require direct access to models to be implemented. But I think the majority of them can be abstracted around model proxies until LLM serving is cheap enough to be run on commodity hardware. Either way, lots of exciting stuff to build!
