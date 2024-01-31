@@ -4,7 +4,11 @@ publishedAt: '2024-01-10'
 summary: 'Where is the software layer for LLM serving?'
 ---
 
-Despite the explosion of demand around large language models, and the proliferation of companies building them, there is a surprising lack of companies building developer tools for serving them in production. This is in stark contrast to the web application space (a much more developed space), where there are many such companies building developer tools for deploying, monitoring and administrating web applications. 
+I realized recently that I had read the phrase "language model serving will become commoditized" without actually thinking particularly deeply about why this might be the case. As I started to explore this further, it transformed into more thoughts around building software for language model serving that isn't the actual API service, and how this correlates with a much more developed industry for developer tools: web applications.
+
+### Background
+
+Despite the explosion of demand around large language models, and the proliferation of companies building them, there is a surprising lack of companies building developer tools for serving them in production. This is in stark contrast to the web application space (a much more developed space), where there are many such companies building developer tools for deploying, monitoring and administrating web applications.
 
 In addition, these companies are _not_ any of the large cloud providers, who are content to provide the infrastructure for these companies to build on top of (perhaps with the exception of Cloudflare's surgical execution on edge computing). Will this dynamic be the same for serving large language models?
 
@@ -15,7 +19,7 @@ If you are not already familiar with [Vercel](https://vercel.com), they are a Pl
 
 Vercel differentiates itself from the large cloud providers by ease of use, making money by selling high margin, value-added features which are almost guaranteed to be used as companies scale web-facing applications (KV stores, databases, CDNs). Curiously, they are not interested in vertical integration, in the sense of owning their own hardware. Why?
 
-One of Vercel's top line features is a [global "edge" caching mechanism](https://vercel.com/docs/edge-network/caching), which caches data requests for serving web applications close to a user's location. Vercel depends on globally distributed CPU servers to provide their locality based serving cache. The "minimumm viable infrastructure" for this caching feature would be a full, global network of datacenters, so  the capital cost of replicating this functionality with their own infrastructure makes this almost impossible.
+One of Vercel's top line features is a [global "edge" caching mechanism](https://vercel.com/docs/edge-network/caching), which caches data requests for serving web applications close to a user's location. Vercel depends on globally distributed CPU servers to provide their locality based serving cache. The "minimum viable infrastructure" for this caching feature would be a full, global network of datacenters, so  the capital cost of replicating this functionality with their own infrastructure makes this almost impossible.
 
 The complexity and overhead of setting up this infrastructure provides little incentive to the cloud providers to compete with them, as Vercel still rely on cloud provided compute. Vercel _cannot_ compete on operating cost for running CPU instances with GCP/AWS etc, because of their scale, and the difficulty and non-homogenous nature of providing general purpose compute (different machine types, storage, etc). Cloud providers have no incentive to provide an enriched developer experience similar to Vercel's, because they can't use their scale to compete on price.
 
@@ -26,7 +30,7 @@ The economics of language model serving is different, because the cost of _runni
 
 Even as technological improvements make LLMs cheaper to run on CPUs (and hence, commodity goods), the cost of running the largest, state of the art LLMs is still commoditized by how much the costs of serving are dominated by GPU access. This has been well demonstrated by the [price war for serving the new Mixtral 8x7b/8x13b models](https://open.substack.com/pub/semianalysis/p/inference-race-to-the-bottom-make?selection=18a0bbfb-d4f9-465d-bef7-df89ea88c6ef&utm_campaign=post-share-selection&utm_medium=web).
 
-Despite the market dynamics differing substantially from the Vercel/GCP/AWS relationship, it demonstrates several similar traits that allow software companies to add value on top of the serving companies themselves. For example, the aggressive market competition for serving LLMs via APIs is causing the standardisation of client libraries. Companies are desperate to make the cost of switching to their new, hot LLM essentially zero, and a part of this is writing API specs which are identical to OpenAI. E.g:
+Despite the market dynamics differing substantially from the Vercel/GCP/AWS relationship, it demonstrates several similar traits that allow software companies to add value on top of the serving companies themselves. For example, the aggressive market competition for serving LLMs via APIs is causing the standardization of client libraries. Companies are desperate to make the cost of switching to their new, hot LLM essentially zero, and a part of this is writing API specs which are identical to OpenAI. E.g:
 
 - [Together AI](https://docs.together.ai/docs)
 - [Replicate Lifeboat](https://lifeboat.replicate.dev/)
@@ -36,7 +40,7 @@ Despite the market dynamics differing substantially from the Vercel/GCP/AWS rela
 
 For companies building developer tools for LLMs, this is great - the overhead of integrating with a wide range of API providers is low, and making it easy for users to switch is also low. Some logging/monitoring companies take advantage of this already - [llm.report](https://llm.report/)'s integration requires changing the OpenAI client's base URL only, and similarly [BrainTrust Data](https://www.braintrustdata.com/docs/guides/proxy) allows consolidated access to multiple model APIs using a single key/service. With model routing services like [WithMartian](https://withmartian.com/), this can even be automated.
 
-Some of these attributes show similarities to the web application ecosystem. The standardisation in client code and access patterns looks similar to React emerging as the dominant JS library for dynamic HTML rendering. React allowed Vercel to elegantly solve the problem of slow client rendering without alienating existing React developers, but one very important difference is the substantial switching cost from one JS framework to another. If you write code in NextJS in order to get the benefits it provides, switching to use Vue would be a large amount of work. Building plugins or libraries across 2 React frameworks is 2x the work, whereas for LLMs, supporting multiple model APIs is quite easy. 
+Some of these attributes show similarities to the web application ecosystem. The standardization in client code and access patterns looks similar to React emerging as the dominant JS library for dynamic HTML rendering. React allowed Vercel to elegantly solve the problem of slow client rendering without alienating existing React developers, but one very important difference is the substantial switching cost from one JS framework to another. If you write code in NextJS in order to get the benefits it provides, switching to use Vue would be a large amount of work. Building plugins or libraries across 2 React frameworks is 2x the work, whereas for LLMs, supporting multiple model APIs is quite easy. 
 
 This means there is almost an anti network effect for LLM serving APIs - users discover alternatives via API aggregators, and then switch to the cheapest/best one. This happens for 2 key reasons - LLMs have the simplest IO of any new technology in history, and they are also (currently) completely stateless.  This is not the case for React frameworks, where the network effect is positive - if library developers make plugins for your framework, they are unlikely to be developed for other frameworks as well.
 
@@ -47,9 +51,9 @@ Although there are some companies that are providing these developer products fo
 
 ### "The Wedge" for LLM serving
 
-What is the key value proposition ["(wedge)"](https://every.to/divinations/product-wedges-a-complete-guide), for LLM serving? The product wedge for Vercel was the NextJS framework, which provided a compelling developer experience and otherwise unatainable web speed for building React applications. Currently for LLMs, the focus is on price and speed/throughput, but that will soon be driven down by a combination of commodity access to hardware and technological innovation. BERT, an encoder model from 5 years ago, [can be trained in 1hr on 8 GPUs at a total cost of $20](https://arxiv.org/abs/2312.17482). There is no reason not to expect a similar level of technological innovation in larger language models, as they are exactly the same technology. Assuming companies will not be able to compete on price, what is the wedge for LLM serving?
+What is the key value proposition ["(wedge)"](https://every.to/divinations/product-wedges-a-complete-guide), for LLM serving? The product wedge for Vercel was the NextJS framework, which provided a compelling developer experience and otherwise unattainable web speed for building React applications. Currently for LLMs, the focus is on price and speed/throughput, but that will soon be driven down by a combination of commodity access to hardware and technological innovation. BERT, an encoder model from 5 years ago, [can be trained in 1hr on 8 GPUs at a total cost of $20](https://arxiv.org/abs/2312.17482). There is no reason not to expect a similar level of technological innovation in larger language models, as they are exactly the same technology. Assuming companies will not be able to compete on price, what is the wedge for LLM serving?
 
-Determining the best wedge for LLMs is an interesting question, because the separate pieces of an effective LLM solution are considerably more interconnected than for a web application. The ultimate value creation in an LLM serving application is the feedback loop between the served model, the generated text and implict user feedback. This means that a potential wedge product feature designed around **building and improving** LLMs needs to cross multiple parts of a "typical" software application stack, e.g logging AND evaluation. This is not the case for a web application, where the value creation is in the initial user experience, and the feedback loop is much more indirect/guided by product sense. I think it is likely that the most effective wedge for LLMS (for B2B companies) will be one of either [_Evaluation_](#evaluation) or [_The Feedback Loop_](#the-feedback-loop).
+Determining the best wedge for LLMs is an interesting question, because the separate pieces of an effective LLM solution are considerably more interconnected than for a web application. The ultimate value creation in an LLM serving application is the feedback loop between the served model, the generated text and implicit user feedback. This means that a potential wedge product feature designed around **building and improving** LLMs needs to cross multiple parts of a "typical" software application stack, e.g logging AND evaluation. This is not the case for a web application, where the value creation is in the initial user experience, and the feedback loop is much more indirect/guided by product sense. I think it is likely that the most effective wedge for LLMS (for B2B companies) will be one of either [_Evaluation_](#evaluation) or [_The Feedback Loop_](#the-feedback-loop).
 
 
 ### Value-add features for LLM serving
@@ -57,14 +61,14 @@ Determining the best wedge for LLMs is an interesting question, because the sepa
 If LLM serving is becoming commoditized, how can a "Vercel of LLMs" provide services which create value? Here are some predictions/ideas:
 
 #### Structured generation
-LLMs are crying out for structured generation, and there are several open source libraries which accomodate this, either through function calling APIs or grammar based generation. The standout options include:
+LLMs are crying out for structured generation, and there are several open source libraries which accommodate this, either through function calling APIs or grammar based generation. The standout options include:
 
 - [Outlines](https://github.com/outlines-dev/outlines), from parent company [.txt](https://dottxt.co/)
 - [Instructor](https://github.com/jxnl/instructor)
 - [Jsonformer](https://github.com/1rgs/jsonformer)
 - [llama.cpp](https://github.com/ggerganov/llama.cpp?tab=readme-ov-file#constrained-output-with-grammars)
 
-Although each of these tools has their ecentricities, when combined with [tools which produce GBNF grammars from typescript interfaces](https://grammar.intrinsiclabs.ai/), this becomes very powerful. One could imagine deploying source code which defines a typescript interface/Pydantic model by converting it to a grammar and automatically deploying structured LLM endpoints based on the generated grammars, similar to Vercel's serverless function deployments.
+Although each of these tools has their eccentricities, when combined with [tools which produce GBNF grammars from typescript interfaces](https://grammar.intrinsiclabs.ai/), this becomes very powerful. One could imagine deploying source code which defines a typescript interface/Pydantic model by converting it to a grammar and automatically deploying structured LLM endpoints based on the generated grammars, similar to Vercel's serverless function deployments.
 
 #### APIs with integrated search
 The LLM startup with the most compelling B2C product (discounting Cohere/Anthropic etc) currently seems to be [Perplexity](https://perplexity.ai), who's focus is integrating search into LLMs at a large scale. Retrieval Augmented Generation (RAG) adds complexity to LLM serving requirements and suddenly adds a layer of statefulness and customization to deployed applications.
@@ -73,7 +77,7 @@ The LLM startup with the most compelling B2C product (discounting Cohere/Anthrop
 This is the current focus of many companies/startups, but there is still a lot of room for improvement, especially around integrating the feedback loop (discussed below). Logging is also a good example of a *standard* application feature that looks quite different due to the prompt/response format. Smarter interfaces, which themselves involve ML, could be powerful differentiators for companies in the space (full text search over logs, clustering by prompt/response, UMAP plots of the last N days of responses).  
 
 #### Watermarking
-As LLM's proliferate, it will become increasingly important to be able to identify the source of a given generation. This is an active research area, some of the recent papers include:
+As LLMs proliferate, it will become increasingly important to be able to identify the source of a given generation. This is an active research area, some of the recent papers include:
 
 - [A Watermark for Large Language Models](https://arxiv.org/abs/2301.10226)
 - [Undetectable Watermarks for Language Models](https://eprint.iacr.org/2023/763)
@@ -91,15 +95,15 @@ Developing locally with LLMs is quite painful - the APIs are expensive, and runn
 
 #### Security and Prompt Injection
 
-One of the largest barriers to widespread adoption of LLM technology in commercial settings will be it's vunerability to prompt injection attacks. Prompt injection attacks are difficult to fix, because by their nature they are just parts of a prompt. ML attempts to detect such inputs will always be vunerable to new and creative ways to do the prompt injection.
+One of the largest barriers to widespread adoption of LLM technology in commercial settings will be it's vulnerability to prompt injection attacks. Prompt injection attacks are difficult to fix, because by their nature they are just parts of a prompt. ML attempts to detect such inputs will always be vulnerable to new and creative ways to do the prompt injection.
 
 #### Federated Finetuning
 
-Some data is sensitive enough that language models should not be trained or fine-tuned on it directly. However, there is a substantial body of research around privacy perserving computation, as well as ML frameworks that have invested in it, like Tensorflow. 
+Some data is sensitive enough that language models should not be trained or fine-tuned on it directly. However, there is a substantial body of research around privacy prerserving computation, as well as ML frameworks that have invested in it, like Tensorflow.
 
 #### Evaluation
 
-Language models are hard to evaluate in a rigorous way. A multitude of benchmarks have been formulated to attempt to automatically evaluate models on tasks. Additionally, for LLM developers, there is another element of variability - the prompt itself. This is the route being taken by many startups. 
+Language models are hard to evaluate in a rigorous way. A multitude of benchmarks have been formulated to attempt to automatically evaluate models on tasks. Additionally, for LLM developers, there is another element of variability - the prompt itself. This is the route being taken by many startups.
 
 - [Braintrust data](https://www.braintrustdata.com/)
 - [Humanloop](https://humanloop.com/)
@@ -107,7 +111,7 @@ Language models are hard to evaluate in a rigorous way. A multitude of benchmark
 - [Athina](https://athina.ai/)
 - ... and many more
 
-This is only one piece of the puzzle when it comes to creating new language model applications. Just as important is collecting structured feedback and responses in a way that is ammenable to further preference finetuning.
+This is only one piece of the puzzle when it comes to creating new language model applications. Just as important is collecting structured feedback and responses in a way that is amenable to further preference finetuning.
 
 
 #### Grounded generation
@@ -116,13 +120,13 @@ Current LLM generation is hard to evaluate and verify. One way to improve this i
 
 ### The feedback loop
 
-A key differentiator with LLMs is the ease of improving a model simply by having people use your product or service. Finetuning on new data, **if you have collected, cleaned and analysed it**, is not a hugely difficult proposition for an ML Engineer. The difficult pieces of this are coordinating what data you need to collect, actually collecting that data, tying it back to LLM generations, and evaluating improved models. Many companies are tackling the individual pieces of this, viewing them as individual pieces of a software stack. 
+A key differentiator with LLMs is the ease of improving a model simply by having people use your product or service. Finetuning on new data, **if you have collected, cleaned and analysed it**, is not a hugely difficult proposition for an ML Engineer. The difficult pieces of this are coordinating what data you need to collect, actually collecting that data, tying it back to LLM generations, and evaluating improved models. Many companies are tackling the individual pieces of this, viewing them as individual pieces of a software stack.
 
 I think a key value proposition for a "Vercel for LLMs" might be to solve several pieces of this at once, creating an "off the shelf" solution for feedback loops. This would involve:
 
-- Logging hooks for existing LLM serving frameworks 
+- Logging hooks for existing LLM serving frameworks
 - A javascript LLM analytics library, allowing users to define "events" which correspond to finetuning signals, tied to model generations
-- Evaluation and filtering tools for reviewing collected data 
+- Evaluation and filtering tools for reviewing collected data
 
 I have not seen a convincing version of this "Flywheel" for production systems. Pieces of it exist, but without being focused at LLMs singularly.
 
@@ -131,7 +135,7 @@ I have not seen a convincing version of this "Flywheel" for production systems. 
 
 One interesting thing about LLM add-on products is that their inputs and outputs are, at a base level, purely text. This enables new features beyond typical solutions, gated by the ML expertise required to build them.
 
-For example, take LLM logging. At one level, a LLM logging solution can provide metrics you might expect from Datadog - time to first token, throughput, cache usage, billing statistics etc. Of course, this information is extremely useful, and provides visibility to LLM users. 
+For example, take LLM logging. At one level, a LLM logging solution can provide metrics you might expect from Datadog - time to first token, throughput, cache usage, billing statistics etc. Of course, this information is extremely useful, and provides visibility to LLM users.
 
 However, there is another set of analysis techniques that only really apply to the text in, text out interface of LLMs; text search over logs, clustering (e.g T-SNE, or UMAP) of recent responses and identifying erroneous or fraudulent usage all require the same language processing competency as building the system itself. These ML features require quite different architectural choices (and ML expertise) than a typical logging solution, making it hard for "general purpose" logging solutions to compete with a LLM specific solution.
 
