@@ -25,11 +25,6 @@ function RoundedImage(props) {
   return <Image alt={props.alt} className="rounded-lg" {...props} />;
 }
 
-// Flexbox with padding
-function FlexBox(props) {
-  return <div className="flex space-x-5">{props.children}</div>;
-}
-
 function Callout(props) {
   return (
     <div className="flex bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 my-8">
@@ -43,7 +38,6 @@ const components = {
   Image: RoundedImage,
   a: CustomLink,
   Callout,
-  FlexBox
 };
 
 interface MdxProps {
