@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Projects",
-  description: "Other projects.",
+  title: "Advisory",
+  description: "AI Consulting & Advisory Services"
 };
 
 export default function AdvisoryPage() {
@@ -62,9 +61,8 @@ export default function AdvisoryPage() {
         </p>
 
         <p>
-          This experience crossing ML research software development, deep learning research and application development has given me repeated exposure to the challenges of building successful ML products and teams.
+          This experience crossing ML research software development, deep learning research and product focused ML has given me repeated exposure to the challenges of building successful ML applications and teams.
         </p>
-
 
         <hr className="my-6 border-neutral-200 dark:border-neutral-700" />
 
@@ -88,7 +86,7 @@ export default function AdvisoryPage() {
         <hr className="my-6 border-neutral-200 dark:border-neutral-700" />
         <h3>Scientific Advisory Boards and Consulting</h3>
         <p>
-          I have previously served on scientific advisory boards and offered tailored advisory services for equity based compensation (Notably <a href="https://casetext.com/" target="_blank" rel="noopener noreferrer">CaseText</a>, which was later acquired by <a href="https://thomsonreuters.com/" target="_blank" rel="noopener noreferrer">Thomson Reuters</a> for $650m).
+          I have previously served on scientific advisory boards and offered tailored advisory services for equity based compensation (Notably <a href="https://casetext.com/" target="_blank" rel="noopener noreferrer">CaseText</a>, acquired by <a href="https://thomsonreuters.com/" target="_blank" rel="noopener noreferrer">Thomson Reuters</a> for $650m).
           Please contact me directly for more information.
         </p>
         <ul>
