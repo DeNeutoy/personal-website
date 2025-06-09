@@ -6,16 +6,15 @@ summary: 'Modeling symmetries in forcefields and generative models of molecules'
 
 Chaitanya K. Joshi's [excellent blog post](https://chaitjo.substack.com/p/transformers-vs-equivariant-networks) on his PhD work inspired me to write down some thoughts on symmetries and invariances in neural network models—particularly in the context of molecular data. Discussions around removing architectural biases can lean a little absolutist  ("[Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html), GPUs go brrr!"), whereas the reality is more nuanced. I am actually not so opposed to the idea of encoding physical priors, but I am interested in when such symmetries should be embedded directly into the model architecture, and when they might be better handled implicitly: through data augmentation, regularization or inference-time tricks.
 
-This post is a summary of my current thinking about where and how to impose symmetries like rotation, translation, and permutation invariance, and how these ideas intersect with generative modeling, energy conservation, and recent developments in diffusion models.
 
-
+This post represents some of my current thinking on the topic, through the lens of two modeling domains in which the approaches to encoding symmetries are very different: neural network potentials and diffusion models. 
 
 ## Symmetries and Invariances
 
-When modeling image data, there are many desirable invariances one can imagine (translation being the predominant one baked into the model architecture). Some of these invariances have questionable utility in practice, or do not match the statistics of a natural data distribution. Rotations of images fits this mould well - in theory, a classifier's ability to accurately predict an image attribute should not have too much to do with it's orientation. But requiring this removes a lot of information about the spatial distribution of colours and objects in images (skies are typically blue, and typically at the top of an image). If a model learns this bias from the data, is it incorrect? 
+When modeling image data, there are many desirable invariances one can imagine (translation being the predominant one baked into the most common image model architecture, CNNs). Some of these invariances have questionable utility in practice, or do not match the statistics of a natural data distribution. Rotations of images fits this mold well - in theory, a classifier's ability to accurately predict an image attribute should not have too much to do with it's orientation. But requiring this invariance property removes a lot of information about the spatial distribution of colours and objects in images (skies are typically blue, and typically at the top of an image). If a model learns this bias from the data, is it incorrect? 
 
 
-#### Symmetries in molecular data
+### How are symmetries different in molecular data?
 When modeling molecular structures, we often have a larger number of possible symmetries to handle/respect than in a domain such as images, because they do not have an intrinsically informative orientation or scale. The most common symmetries we want to model are:
 
 - **Permutation Symmetries** - When we change ordering of atoms in a system, we want our model to produce the same result.
@@ -25,8 +24,8 @@ When modeling molecular structures, we often have a larger number of possible sy
 - **Conservation of energy** (this is a special case, because it is a [symmetry of the dynamics of the system](https://en.wikipedia.org/wiki/Noether%27s_theorem), not the configuration space)
 
 
-#### Encoding symmetries in model architectures
-Some of these symmetries are easier than others to encode into a model architecture by construction. For example, making a model translationally invariant requires only that the model inputs contain only relative coordinates with respect to other atoms in the system. Permutation symmetries also fit well with the types of models that are commonly applied to molecular data (Graph Neural Networks and Transformers), which are easily made permutation invariant by construction.
+### Encoding symmetries in model architectures
+Some of these symmetries are easier than others to encode into a model architecture by construction. For example, making a model translationally invariant requires that the model inputs contain only relative coordinates with respect to other atoms in the system. Permutation symmetries also fit well with the types of models that are commonly applied to molecular data (Graph Neural Networks and Transformers), which are easily made permutation invariant by construction.
 
 Even symmetries which we believe are easy to encode in to a model architecture result in models with a bias toward certain models. For example, models which use relative coordinates between atoms are often biased toward edge heavy GNN models which use a lot of their parameters for processing edge representations, where the way to encode a finer grained representation of distance is to add more edges. This is particularly the case for models which encode edge distances in a PBC aware way, i.e the distance between two atoms is the minimum distance over a set of periodic images. Some more recent generative models of molecules disregard this architectural bias entirely by encoding atom positions as node features and either using a relative coordinate system with respect to a given basis, or by using data augmentation (e.g random translation) to make the model invariant to the choice of origin.
 
@@ -36,8 +35,9 @@ Sometimes encoding these symmetries is a concrete negative because of the way a 
 Although all of these symmetries are important, the rest of this post will focus on just two: **equivariance with respect to rotations** and **conservation of energy**. These two properties require the most careful consideration, and are the most difficult/expensive to encode into a model architecture. They are also distinct in an interesting way - equivariance is easy to learn from data, but conservation of energy is not.
 
 
-## Equivariance with respect to rotations
+## Why is equivariance important for forcefields?
 
+In the context of molecular forcefields, equivariance with respect to rotations is important because the physical properties we're modeling should not depend on our choice of coordinate system. A forcefield model predicts both scalar quantities (like total energy) and vector quantities (like atomic forces), and these should transform appropriately under rotations.
 
 Equivariance with respect to rotations means that when we apply a rotation $R$ to our input coordinates, the model's outputs transform in a predictable way. For scalar quantities like energy, we want rotational invariance:
 
@@ -58,8 +58,7 @@ where $\mathbf{r}$ represents the atomic coordinates and $R$ is a rotation matri
 - **Data Augmentation/Regularization (Approximate)** - Apply a rotation to the input data, or regularize the model to learn an equivariant representation
 
 
-
-### Equigrad - a continuous regularization for equivariance
+### Equigrad - continuous regularization for rotational equivariance
 It is also possible to encourage a model to learn equivariant representations in a continuous manner using regularization. Equigrad, a method that we proposed in our [Orb V3 paper](https://arxiv.org/abs/2504.06231), is one method for this. 
 
 Conceptually, we compute a gradient of the predicted energy $E$ with respect to an identity rotation matrix $\mathbf{R}$ that is inserted into the computational graph at the input. A nice way to achieve this is by first expressing an identity rotation $\mathbf{R}$ as the matrix exponential of a skew-symmetric null matrix, and then computing the gradient of $E$ with respect to that null matrix:
@@ -197,17 +196,19 @@ def train_step(batch):
 ```
 
 
- [Orb V1/2](https://arxiv.org/abs/2410.22570) were trained as direct models, and as such we observed that they did not conserve energy, particularly under NPT MD conditions. Orb V3 contained our first set of models that were conservative. Hopefully this emphasises that I am not fundamentally against baking in important properties of a system into a model - we could not find a good way to approximate energy conservation in a forcefield effectively, so we built new models with this property baked in.
+[Orb V1/2](https://arxiv.org/abs/2410.22570) were trained as direct models, and as such we observed that they did not conserve energy, particularly under NPT MD conditions. Orb V3 contained our first set of models that were conservative. Hopefully this emphasises that I am not fundamentally against baking in important properties of a system into a model - we could not find a good way to approximate energy conservation in a forcefield effectively, so we built new models with this property baked in.
 
-### Forcefields as unnormalized EBMs
+Conservative models are very interesting! In particular, they are common in the context of forcefields, but they also have an analogous interpretation in the machine learning literature: Energy Based Models (EBMs). The next section explores this connection, and in particular looks at diffusion models as a very successful class of models which avoid encoding this conservation property into a model architecture.
+
+### Forcefields are secretly unnormalized Energy Based Models
 
 Forcefields can be viewed as unnormalized Energy Based Models (EBMs) trained with direct supervision. Forcefields define a deterministic energy function $E(r)$ over atomic coordinates $r$, and forces are given by: $$F = -\nabla_r E(r)$$. This is used extensively in MD by defining a Boltzmann distribution over the atomic coordinates, which is equivalent to the distribution of the system under the forcefield. If you interpret $p(r) \propto e^{-E(r)/kT}$ as the probability of a configuration $r$, then the forcefield is the gradient of the log of this probability (up to a constant factor at a given temperature).
 
 The main difference is the method of training - in other areas of machine learning, it is very unusual to have access to energies and gradients of the potential function you are trying to model. A large swathe of ML literature is concerned with how to train EBMs (e.g [Contrastive Divergence, Maximum Likelihood with MCMC, NCE](https://arxiv.org/abs/2101.03288)), or approximate models of the score function (Score Matching, Denoising Diffusion Implicit Models) which do not require a tractable normalising constant.
 
 
-#### Score matching and Diffusion
-One particularly interesting approximation of EBMs are diffusion models. These models are trained to approximate the score function of the data distribution, but in fact the entire objective of this score matching objective is to avoid the need to define an energy function. 
+### Score matching and Diffusion as Energy Based Model Approximations
+One particularly interesting approximation of EBMs are diffusion models. These models are trained to approximate the score function of the data distribution, where the score matching objective is specifically designed to avoid the need to explicitly define or compute an energy function.
 
 The score function is defined as the gradient of the log probability density:
 
@@ -229,7 +230,7 @@ $$\mathcal{L} = \mathbb{E}_{x_0 \sim p_{data}, \epsilon \sim \mathcal{N}(0, I), 
 where $x_t = x_0 + \sigma_t \epsilon$ is the noised data at time $t$, and $s_\theta(x_t, t)$ is the neural network approximating the score function.
 
 
-#### Conservative Diffusion models
+### Conservative Diffusion models
 It is possible to define a model of the score function in a similar way to the adaptations one makes for a conservative forcefield, namely defining an energy function and defining your score as the gradient of the log of this energy function:
 
 <center>
@@ -257,7 +258,7 @@ loss.backward()
 
 This idea has been explored in [Reduce, Reuse, Recycle: Compositional Generation with Energy-Based Diffusion Models and MCMC](https://arxiv.org/abs/2302.11552) and discussed in [Should EBMs model the energy or the score?](https://openreview.net/forum?id=9AS-TF2jRNb). The second paper, (a very clear exposition of the relationship between EBMs and diffusion models) does include the following quote: "in personal communication multiple researchers in this area indicated that they did not obtain good results following this approach.". This is likely because defining a model in this way requires a 2x increase in memory use and training time, due to the two gradient computations.
 
-#### Why is this connection interesting?
+### Why Conservative NNPs but not Conservative Diffusion models?
 Applications of diffusion models should desire all of the properties that a conservative vector field brings - after all, sampling from a diffusion model also uses various forms of annealed Langevin dynamics, which is only guaranteed to draw samples from the true data distribution if the forcefield is conservative. It would also be beneficial for a diffusion model to be able to compare relative energies of different samples. Knowing the energy function would also enable the use of more advanced MCMC techniques when sampling, such as Hamiltonian Monte Carlo. Despite this, diffusion models are the best performing generative models by some margin for a wide range of domains.
 
 It is possible that defining conservative models of the score function has been under-explored. However, given the massive popularity of diffusion models (and the quote from multiple researchers in the paper), I think it is likely that the performance tradeoff required to make diffusion models produce a conservative vector field is either 1) not worth the added complexity, or 2) does not scale to the size of the top performing diffusion models. This is a good example of scalability being a major factor in the design of neural network models - we sacrifice some properties of the model in order to make it more scalable.
@@ -272,5 +273,5 @@ Direct forcefield models are an example of the trade-off between energy conserva
 <br/>
 <br/>
 
-##### _P.S - A Research Idea_
+#### _P.S - A Research Idea_
 _All of the above gives a more theoretical motivation for the idea of pretraining forcefields using denoising models. This noise prediction objective is a good approximation to the score of a forcefield model close to equilibrium. I am very interested in methods for adjusting this pretraining objective to make it more suitable for conservative forcefields (or if this matters at all)! The score matching objective approximates a non-conservative vector field; if you define a conservative vector field (like in the pseudocode above) and train it with denoising, is this a better pretraining objective for a conservative forcefield?_ 
