@@ -1,37 +1,38 @@
-import './global.css';
-import clsx from 'clsx';
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import Sidebar from '../components/sidebar';
-import { Analytics } from '@vercel/analytics/react';
+import "./global.css";
+import "katex/dist/katex.min.css";
+import clsx from "clsx";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import Sidebar from "../components/sidebar";
+import { Analytics } from "@vercel/analytics/react";
 
 const kaisei = localFont({
-  src: '../public/fonts/kaisei-tokumin-latin-700-normal.woff2',
-  weight: '700',
-  variable: '--font-kaisei',
-  display: 'swap',
+  src: "../public/fonts/kaisei-tokumin-latin-700-normal.woff2",
+  weight: "700",
+  variable: "--font-kaisei",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Mark Neumann',
-    template: '%s | Mark Neumann',
+    default: "Mark Neumann",
+    template: "%s | Mark Neumann",
   },
-  description: 'Researcher, Engineer.',
+  description: "Researcher, Engineer.",
   openGraph: {
-    title: 'Mark Neumann',
-    description: 'Researcher and Engineer.',
-    url: 'https://markneumann.xyz',
-    siteName: 'Mark Neumann',
+    title: "Mark Neumann",
+    description: "Researcher and Engineer.",
+    url: "https://markneumann.xyz",
+    siteName: "Mark Neumann",
     images: [
       {
-        url: 'https://markneumann.xyz/og.jpg',
+        url: "https://markneumann.xyz/og.jpg",
         width: 400,
         height: 400,
       },
     ],
-    locale: 'en-US',
-    type: 'website',
+    locale: "en-US",
+    type: "website",
   },
   robots: {
     index: true,
@@ -39,17 +40,17 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   twitter: {
-    title: 'Mark Neumann',
-    card: 'summary_large_image',
+    title: "Mark Neumann",
+    card: "summary_large_image",
   },
   icons: {
-    shortcut: '/favicon.ico',
+    shortcut: "/favicon.ico",
   },
 };
 
@@ -62,7 +63,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={clsx(
-        'text-black bg-white dark:text-white dark:bg-[#111010]',
+        "text-black bg-white dark:text-white dark:bg-[#111010]",
         kaisei.variable
       )}
     >

@@ -1,20 +1,22 @@
-import { defineDocumentType, makeSource } from 'contentlayer/source-files';
-import remarkGfm from 'remark-gfm';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import { defineDocumentType, makeSource } from "contentlayer/source-files";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
+import rehypeKatex from "rehype-katex";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 /** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields = {
   slug: {
-    type: 'string',
+    type: "string",
     resolve: (doc) => doc._raw.flattenedPath,
   },
   structuredData: {
-    type: 'object',
+    type: "object",
     resolve: (doc) => ({
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
       headline: doc.title,
       datePublished: doc.publishedAt,
       dateModified: doc.publishedAt,
@@ -24,60 +26,61 @@ const computedFields = {
         : `https://markneumann.xyz/api/og?title=${doc.title}`,
       url: `https://markneumann.xyz/blog/${doc._raw.flattenedPath}`,
       author: {
-        '@type': 'Person',
-        name: 'Mark Neumann',
+        "@type": "Person",
+        name: "Mark Neumann",
       },
     }),
   },
 };
 
 export const Blog = defineDocumentType(() => ({
-  name: 'Blog',
+  name: "Blog",
   filePathPattern: `**/*.mdx`,
-  contentType: 'mdx',
+  contentType: "mdx",
   fields: {
     title: {
-      type: 'string',
+      type: "string",
       required: true,
     },
     publishedAt: {
-      type: 'string',
+      type: "string",
       required: true,
     },
     summary: {
-      type: 'string',
+      type: "string",
       required: true,
     },
     image: {
-      type: 'string',
+      type: "string",
     },
   },
   computedFields,
 }));
 
 export default makeSource({
-  contentDirPath: 'content',
+  contentDirPath: "content",
   documentTypes: [Blog],
   mdx: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       rehypeSlug,
+      rehypeKatex,
       [
         rehypePrettyCode,
         {
-          theme: 'one-dark-pro',
+          theme: "one-dark-pro",
           onVisitLine(node) {
             // Prevent lines from collapsing in `display: grid` mode, and allow empty
             // lines to be copy/pasted
             if (node.children.length === 0) {
-              node.children = [{ type: 'text', value: ' ' }];
+              node.children = [{ type: "text", value: " " }];
             }
           },
           onVisitHighlightedLine(node) {
-            node.properties.className.push('line--highlighted');
+            node.properties.className.push("line--highlighted");
           },
           onVisitHighlightedWord(node) {
-            node.properties.className = ['word--highlighted'];
+            node.properties.className = ["word--highlighted"];
           },
         },
       ],
@@ -85,7 +88,7 @@ export default makeSource({
         rehypeAutolinkHeadings,
         {
           properties: {
-            className: ['anchor'],
+            className: ["anchor"],
           },
         },
       ],
