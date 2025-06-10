@@ -231,7 +231,7 @@ where $x_t = x_0 + \sigma_t \epsilon$ is the noised data at time $t$, and $s_\th
 
 
 ### Conservative Diffusion models
-It is possible to define a model of the score function in a similar way to the adaptations one makes for a conservative forcefield, namely defining an energy function and defining your score as the gradient of the log of this energy function:
+It is possible to define a model of the score function in a similar way to the adaptations one makes for a conservative forcefield, namely defining an energy function and defining your score as the gradient of the log of this energy function, even when the energy function is not explicitly defined for domains such as images:
 
 <center>
 $$s_\theta(x) = -\nabla_x E_\theta(x)$$
@@ -241,13 +241,13 @@ where $E_\theta(x)$ is a neural network parameterizing (a synthetic, unknown) en
 
 
 ```python
-data = system.get_positions()
-noise = torch.randn_like(data) * 0.1
-noised = data + noise
+image = torch.randn(1, 3, 10, 10)
+noise = torch.randn_like(image) * 0.1
+noised = image + noise
 model = torch.nn.Sequential(
-    torch.nn.Linear(10, 10),
+    torch.nn.Conv2d(3, 16, 3),
     torch.nn.ReLU(),
-    torch.nn.Linear(10, 1)
+    torch.nn.Conv2d(16, 1, 3)
 )
 
 energy = model(noised)
@@ -259,7 +259,7 @@ loss.backward()
 This idea has been explored in [Reduce, Reuse, Recycle: Compositional Generation with Energy-Based Diffusion Models and MCMC](https://arxiv.org/abs/2302.11552) and discussed in [Should EBMs model the energy or the score?](https://openreview.net/forum?id=9AS-TF2jRNb). The second paper, (a very clear exposition of the relationship between EBMs and diffusion models) does include the following quote: "in personal communication multiple researchers in this area indicated that they did not obtain good results following this approach.". This is likely because defining a model in this way requires a 2x increase in memory use and training time, due to the two gradient computations.
 
 ### Why Conservative NNPs but not Conservative Diffusion models?
-Applications of diffusion models should desire all of the properties that a conservative vector field brings - after all, sampling from a diffusion model also uses various forms of annealed Langevin dynamics, which is only guaranteed to draw samples from the true data distribution if the forcefield is conservative. It would also be beneficial for a diffusion model to be able to compare relative energies of different samples. Knowing the energy function would also enable the use of more advanced MCMC techniques when sampling, such as Hamiltonian Monte Carlo. Despite this, diffusion models are the best performing generative models by some margin for a wide range of domains.
+Applications of diffusion models, regardless of domain, should desire all of the properties that a conservative vector field brings - after all, sampling from a diffusion model also uses various forms of annealed Langevin dynamics, which is only guaranteed to draw samples from the true data distribution if the forcefield is conservative. It would also be beneficial for a diffusion model to be able to compare relative energies of different samples. Knowing the energy function would also enable the use of more advanced MCMC techniques when sampling, such as Hamiltonian Monte Carlo. Despite this, diffusion models are the best performing generative models by some margin for a wide range of domains.
 
 It is possible that defining conservative models of the score function has been under-explored. However, given the massive popularity of diffusion models (and the quote from multiple researchers in the paper), I think it is likely that the performance tradeoff required to make diffusion models produce a conservative vector field is either 1) not worth the added complexity, or 2) does not scale to the size of the top performing diffusion models. This is a good example of scalability being a major factor in the design of neural network models - we sacrifice some properties of the model in order to make it more scalable.
 
@@ -268,10 +268,3 @@ It is possible that defining conservative models of the score function has been 
 All of this discussion to say - we desire conservative, equivariant forcefield models because the applications we use them in make heavy use of the ability to produce physical dynamics, determine a sample's energy under a model, and by extension the ability to compare relative energies of different samples. However, there is room for caution in this approach, because empirically, the best models for density estimation in many other modalities skirt around this explicit modeling. 
  
 Direct forcefield models are an example of the trade-off between energy conservation and equivariance vs model scalability. It is not that ML researchers are unaware of the importance of energy conservation, or equivariance, but that we have seen in other contexts that achieving these properties by encoding them into a model architecture is not always the best choice, and that sometimes these properties can be accessed in a different way. For example, newer, continuous parameterizations of diffusion models as ODEs can access [exact log likelihoods for individual samples via Hutchinson's estimator](https://arxiv.org/abs/2011.13456), allowing comparison of relative samples, or [averaging over rotations of a system at runtime](https://arxiv.org/abs/2406.17747) allows an approximation of equivariance up to an arbitrary precision. These types of indirect approaches often results in models which can get the best of both worlds up to some approximation, so it's important to view these seemingly "brute force" approaches with the idea that they may have something to add to the conversation. I'm excited about developing the right tools for representing the constraints at hand, whilst being open to the idea that approximate symmetry might be good enough, or even better, when deployed at scale.
-
-
-<br/>
-<br/>
-
-#### _P.S - A Research Idea_
-_All of the above gives a more theoretical motivation for the idea of pretraining forcefields using denoising models. This noise prediction objective is a good approximation to the score of a forcefield model close to equilibrium. I am very interested in methods for adjusting this pretraining objective to make it more suitable for conservative forcefields (or if this matters at all)! The score matching objective approximates a non-conservative vector field; if you define a conservative vector field (like in the pseudocode above) and train it with denoising, is this a better pretraining objective for a conservative forcefield?_ 
