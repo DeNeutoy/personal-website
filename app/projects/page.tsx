@@ -60,6 +60,18 @@ export default function ProjectsPage() {
           An analysis of the citations of papers rejected from ICLR.
         </p>
       </Link>
+      <Link
+        className="flex flex-col space-y-1 mb-4 max-w-lg"
+        href="https://deneutoy.github.io/best-rejected-papers/"
+        referrerPolicy="no-referrer"
+        target="_blank"
+      >
+        <h2 className="font-bold text-xl">SNOR v1 - The Structured, Normalized OpenReview Dataset</h2>
+        <p className="my-5 text-neutral-800 dark:text-neutral-200">
+        A dataset of 38,262 linked records between OpenReview submissions and a dynamic academic graph, as well as 462,995 structured comments from reviewers.
+        </p>
+      </Link>
+
 
 
     </section>
