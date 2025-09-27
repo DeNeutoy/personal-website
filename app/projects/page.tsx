@@ -72,6 +72,18 @@ export default function ProjectsPage() {
         </p>
       </Link>
 
+      <Link
+        className="flex flex-col space-y-1 mb-4 max-w-lg"
+        href="https://roundupmail.com"
+        referrerPolicy="no-referrer"
+        target="_blank"
+      >
+        <h2 className="font-bold text-xl">Roundup Mail</h2>
+        <p className="my-5 text-neutral-800 dark:text-neutral-200">
+          Create collaborative newsletters with your friends/coworkers.
+        </p>
+      </Link>
+
 
 
     </section>
