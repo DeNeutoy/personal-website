@@ -1,0 +1,96 @@
+---
+title: "Mutagenesis data for biological alignment"
+publishedAt: '2025-10-15'
+summary: 'Mutagenesis data for biological alignment'
+---
+
+*I wrote this post whilst musing about the differences between frontier labs working on language models and biotech companies working on protein models, and specifically how biotech companies can approach the data bottleneck. I think the most valuable/successful biotech modelling platform companies will emerge in lead optimization rather than target discovery - but these thoughts are still very much a work in progress! Interested to hear alternative opinions/perspectives.*
+
+Binder design is hot right now. The field has quickly moved from methods like [RFDiffusion](https://www.nature.com/articles/s41586-023-06415-8) and [RFAntibody](https://www.biorxiv.org/content/10.1101/2024.03.14.585103v1) achieving \~1% for finding \<1µM binders to gradient-based inverse design methods ([EvoBind2](https://www.nature.com/articles/s42004-025-01601-3), [BindCraft](https://www.nature.com/articles/s41586-025-09429-6)) that achieve binding rates of 10-100% across a wide range of target protein families. (good overviews from [Boolean Biotech](https://blog.booleanbiotech.com/protein-binder-design-revisited) and [Escalante Bio](https://blog.escalante.bio/minibinder-design-is-just-not-that-hard/) go into more detail for some of these methods). The development of these methods is very exciting from a scientific perspective\! As designing binders becomes increasingly easy computationally, their range of use also expands significantly \- for example, using de-novo proteins as pseudo-consumables in lab settings, for sensing or one-off assays. 
+
+The elephant in the room for these companies is access to differentiated experimental data. Most protein structure prediction models are trained on the PDB (or augmented versions thereof), the close to singular source of truth for experimentally solved protein structures. While there is also a massive body of private data for training text/vision LLMs (Youtube being the most obvious example), the data is not categorically different from existing data available on the web. This is not the case with biological data - Big pharma has access to vast amounts of proprietary data, knows this data is valuable, and isn't going to give it away for free. 
+
+This data bottleneck has two, equally ferocious heads. Firstly, the available data is quite small - the PDB contains 229,564 structures, but when clustered by sequence similarity, the size of datasets used for training is much smaller - typically of the order of 10,000-40,000 structures. Secondly, the PDB is overwhelmingly dominated by naturally occurring proteins, with only a small fraction of the structures being synthetic or engineered proteins, and biases towards certain protein families and tertiary structures. The [Proteina paper (Table 4)](https://arxiv.org/abs/2503.00710) demonstrates this by showing that unconditional folding models generate structures with predominantly alpha-helices over 70% of the time.
+
+
+In addition to this data bottleneck, the additional domain advantage for working in the natural sciences is rapidly falling, with companies like Adaptyv offering white-glove experimental design services, and models like [SimpleFold](https://arxiv.org/abs/2509.18480v1) showing that in the limit of more data, the complex, domain-specific algorithmic designs of some structure prediction modules are not necessary. There is likely some open road ahead in the form of [smart approaches to data augmentation and pretraining, particularly using pLDDT based uncertainty metrics](https://www.biorxiv.org/content/10.1101/2025.07.03.663105v1), but fundamentally, there is a data bottleneck which will remain impassable without direct experimental feedback loops. 
+
+
+
+It is notable that the most promising companies operating in the applied biology space have distinct theses for how to resolve these issues with a platform-based technology ([A-Alpha Bio](https://www.aalphabio.com/technology/) with multiplexed protein-protein interaction assays, [Manifold Bio](https://www.manifold.bio/#platform) with in-vivo screening, [Nabla Bio](https://www.nabla.bio/) with a therapeutically relevant wet lab setup for antibodies). 
+
+
+For a foundational research company to succeed at tackling the more general version of this problem, they need to be able to generate models capable of exploring the vast, unnatural sequence space of protein sequences, despite models that are trained only on protein databases drawn broadly from the evolutionary distribution of proteins. Given this computational model \<\> experimental structure gap, two questions naturally follow. 
+
+**How do we most efficiently bridge this gap from a research and engineering perspective?**
+
+ **Which businesses/business models are most well placed to source the necessary data, information and talent to be able to execute on this objective?** 
+
+This post will focus one one that I think is quite promising - high throughput mutagenesis. 
+
+## Structure-Activity Relationships and Lead Optimization
+
+Improving the potency, selectivity, and safety of candidate molecules has traditionally been viewed as the “wet-lab grind” between discovery and development. In small-molecule drug design, this often involves modifying functional groups, adjusting ring systems, and testing analogs for shifts in potency, selectivity, absorption or toxicity profiles. In proteins, the analogous process is **mutational scanning** \- introducing controlled changes to amino acid residues to map how each mutation alters properties like binding affinity, expression, or stability.
+
+Several experimental techniques are used to generate Structure-Activity Relationship (SAR) landscapes. **Alanine scanning** replaces residues one-by-one to identify functional “hotspots.” **Site-saturation mutagenesis** modifies a given residue position to all 20 amino acids to uncover tolerated or beneficial substitutions. **Deep mutational scanning (DMS)** scales this up massively: thousands of single/multiple mutation variants are synthesized (often via oligo libraries) and tested in parallel using next-generation sequencing to read out relative fitness, expression or binding data for all of these variants.
+
+Mutagenesis techniques generate data which is particularly suitable for *alignment.* It gives a relative metric of quality between a wild type (original) structure and a mutated structure. If one squints their eyes (quite hard), this data looks similar to the human preference data that is commonly used to align text based language models \- we have multiple generations, with a relative quality score describing an implicit preference. In fact, mutagenesis data is already used widely for evaluation of protein representation learning \- the [Protein Gym benchmark](https://proteingym.org/) being the primary example. 
+
+Mutagenesis data overcomes the primary problem with the existing datasets available to any protein modelling method \- all of the experimentally derived structures are from the evolutionary distribution of proteins. Capturing relative quality measures of proteins *near, but not on* this data manifold is one possible strategy for beginning to explore the space of unnatural protein sequences, leading to models which are more effective at exploring this space.
+
+
+## Types of Mutagenesis
+
+Alanine scanning is a type of mutagenesis that involves creating mutant libraries by substituting every position in a target protein with the amino acid alanine. It is commonly used for “hotspot detection” or epitope mapping \- identifying sub-sequences or motifs that are critical for protein function.
+
+Alanine, rather than other amino acids, is chosen because it has a small methyl group that doesn't introduce extreme steric or electrostatic effects. This means that proteins with residues substituted for Alanine typically retain the same secondary structure \- meaning their overall 3D structure is generally conserved. This property of Alanine is the basis for the wonderfully named “[Alanine World Model](https://pubmed.ncbi.nlm.nih.gov/31694194/)”, which postulates that Alanine is the base amino acid from which polar amino acids (GCA coded) and non-polar GCAU are derived, forming the secondary structure motifs of α-helices and β-sheets respectively. 
+
+Even this relatively simple technique can allow quite advanced insight into protein function. The [original paper](https://pubmed.ncbi.nlm.nih.gov/2471267/) introducing Alanine Scanning used it to identify the critical residues in the receptor binding domains for Human Growth Hormone (hGH). During the pandemic, Naveenchandra Suryadevara and co-workers at the Vanderbilt Vaccine Center used [alanine scanning to map hotspots of the N-terminal domain of SARS-CoV-2](https://www.cell.com/cell/fulltext/S0092-8674\(21\)00357-3). Most diagnostic tests and available vaccines for COVID-19 were designed based on the larger “Spike” protein \- where the virus attaches to healthy cells (the receptor binding domain). Vaccines targeting this spike domain work well, but suffer from one critical flaw \- receptor binding domain in many viruses is highly variable, meaning that new variants of the virus are likely to have mutations in this region, reducing the effectiveness and shelf-life of vaccines. In contrast, the N-terminal domain is highly conserved \- so antibodies targeting this protein region may be more effective across virus variants.  
+
+In contrast to Alanine scanning which replaces each different position in a protein sequence with the same (alanine) residue, **site saturation mutagenesis** replaces a single position in a protein sequence with every possible alternative residue. This type of mutagenesis is a common protein engineering tool across antibody affinity maturation, enzyme engineering and binder design, given the requirement for knowing *which* residues are important upfront. 
+
+<center>
+<img src="/images/lead-opt/mutagenesis_schemes.png" alt="Mutagenesis Schemes" width="800" height="500" />
+
+***Left:** DNA libraries generated by random mutagenesis in sample sequence space. The amino acid substituted into a given position is shown. Each dot or set of connected dots is one member of the library. Error-prone PCR randomly mutates some residues to other amino acids. Alanine scanning replaces each residue of the protein with alanine, one-by-one. Site saturation substitutes each of the 20 possible amino acids (or some subset of them) at a single position, one-by-one. **Right:** The ideal experimental exploration of sequence space, based on 1\) a constrained search space and 2\) driven by computational model likelihood for given mutations within the constrained regions.*
+</center>
+
+## Modelling using these ideas
+Although mutagenesis data has broadly been used for evaluating protein representation learning techniques, several exciting papers have demonstrated that this alignment approach using DMS data can work well experimentally. 
+
+[Functional alignment of protein language models via reinforcement learning](https://www.biorxiv.org/content/10.1101/2025.05.02.651993v1) introduces a method called “Reinforcement Learning from Experiment Feedback (RLXF)” (essentially RLHF but for mutagenesis data) to engineer CreiLOV, an oxygen-independent fluorescent reporter protein. CreiLOV is interesting because the ubiquitous oxygen-dependent green fluorescent protein (GFP) is oxygen-dependent, meaning it cannot be used in hypoxic or anaerobic environments such as gut microbiomes or high-density fermentations. CreiLOV is also a great example of why evolutionary preferences in a protein may not be functionally aligned. 
+
+Proteins containing the [LOV domain](https://en.wikipedia.org/wiki/Light-oxygen-voltage-sensing_domain) (of which CreiLOV is one) typically occur as blue light photoreceptors in fungi, plants and algae. As such, fluorescence is not *required* for their function \- it’s just a happy accident of evolution. The authors demonstrate this by showing that functionally improved CreiLOV mutants are not preferred by protein language models, highlighting the need for this type of functional alignment.
+
+[Accelerating protein engineering with fitness landscape modelling and reinforcement learning](https://www.nature.com/articles/s42256-025-01103-w) ([code available](https://github.com/microsoft/Mu-Protein)) from Microsoft Research takes a similar line, adding in a search component. 
+
+The particularly exciting thing about this paper is that they show generalization from models trained on single mutation data to generations containing multiple mutants. This is interesting \- one downside of mutagenesis data is that it doesn’t capture epistasis (the functional co-dependence between individual mutations made to a protein sequence) as in its most common forms, it only generates single mutation variants. This suggests that even with standard mutagenesis data, we might be able to align PLMs.  
+ 
+
+### Why Shouldn’t we use Mutagenesis data?
+
+Using mutagenesis data to train or fine-tune models is far from straightforward. Experimental readouts of “function” depend heavily on the cell type, assay conditions, and post-translational modifications which all shape what’s actually being measured. The same mutation in one protein can enhance binding in one environment and diminish expression in another, making it difficult to define a stable reward signal across different domains/cell types. Some assay readouts, like expression or thermostability, do generalize across hosts/domains, but most don’t. Finding generalizable assays which provide value across a wide range of targets and conditions is a major challenge.
+
+Typical DMS datasets are single mutation variants, which is not sufficient to capture the epistatic interactions that drive true functional shifts. Indels (deletions and insertions) are also not captured by single mutation data, and are a major source of functional variation in proteins. For alignment, we need richer objectives - either through multi-mutation experimental datasets or by integrating mutational feedback with large-scale textual or structural data that encode biological context. Some data in this form already exists - for example the [Disease and Variants tab of UniProt](https://www.uniprot.org/uniprotkb/P14735/entry) contains known mutations and their effects on protein function, along with citations to the papers demonstrating these effects.
+
+The ability to evaluate zero-shot performance of variant prediction models on single mutation data is currently a major point of debate in the community. [This paper from Deborah Mark's lab](https://openreview.net/forum?id=DvC6VL7TJK) find that simple alignment approaches are competitive with parameterized methods for viral proteins (out of distribution compared to ProteinGym). Pascal Notin, the lead author of ProteinGym, also has a [sobering blog post on scaling laws for biology](https://substack.com/home/post/p-163085988), although some of these observations have been explained by [Hou Chao's excellent work](https://www.biorxiv.org/content/10.1101/2025.04.25.650688v1) showing a correlation between model perplexity, MSA depth/sequence similarity and Spearman correlation for some of the ProteinGym and Stability DMS datasets. 
+
+<center>
+<img src="/images/lead-opt/esm-homologs.png" alt="esm homologs" width="700" height="500" />
+</center>
+
+Another challenge here is fitting the data collection required into a coherent business model, given biotech's asset-based development lifecycle. I think there is still some hope here though - particularly as existing LLM finetuning/adaption methods (e.g LoRA) are well-suited to handle local adaptation, and could easily be applied to individualized optimization campaigns today.
+
+
+### Other tailwinds
+
+In addition to the existing promising RL approaches being applied to mutagenesis data, there are a few other tailwinds that make pursuing this space more attractive.
+
+Firstly, the cost of running mutagenesis experiments is falling rapidly. Traditional DNA synthesis has long faced a trade-off between sequence length and scale. Biologists could either synthesize a few long fragments (\<5,000 bp) or many short oligopools (~300 bp). Companies like Twist Bioscience and IDT are now extending these limits with [multiplexed gene fragments up to 500 bp](https://www.twistbioscience.com/products/genes/multiplexed-gene-fragments), allowing the construction of large libraries for mutational scanning. New techniques for [creating libraries combinatorially from oligopools](https://www.biorxiv.org/content/10.1101/2025.03.22.644747v1) massively reduce the cost and complexity of designing and running these experiments at scale. Combined with ML based optimization methods for selecting library candidates, this could reduce the cost of running mutagenesis experiments to a fraction of what it is today.
+
+Secondly, mutational scanning does not only apply to protein engineering. In genetics it is already a mature field, with [MAVE (Multiplexed Assays of Variant Effects)](https://www.nature.com/articles/s41576-025-00870-x) and [MAVE DB (a database of MAVE assays)](https://www.mavedb.org/) being established tools for genetics. MAVE assays are a type of mutational scanning assay that is used to identify the functional impact of genetic variants, typically through measuring disease co-occurence or changes in drug response. Integrating these assays with ML based approaches to variant effect prediction could provide a rich source of data for multimodal proteomic/genomic language model alignment whilst also providing immediate value in the form of predictive risk screening, clinical trial selection and target identification for precision medicine. [New methods like LABEL-seq](https://www.biorxiv.org/content/10.1101/2024.04.19.590094v1) for in-situ, multiplexed measurement of variants would push this even further.
+
+
+## Conclusion
+
+Mutagenesis data offers a potential bridge between experimental biology and machine learning by offering a way to connect models trained on the evolutionary distribution of natural proteins to the far larger space of synthetic proteins. Closing the loop by vertically integrating experimental throughput with model-driven design could provide a significant competitive advantage, and lead optimization might be the place where biology’s version of the “RLHF moment” finally arrives.
