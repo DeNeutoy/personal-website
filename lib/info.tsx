@@ -6,10 +6,13 @@ export const about = () => {
   return (
     <>
     I'm a researcher and engineer interested in neural networks and interactive machine learning.
-    I'm currently the Head of Machine Learning at {` `}
+    Currently I'm a Principal Scientist at {` `}
+    <a href="https://evolutionaryscale.ai/" target="_blank" rel="noopener noreferrer"><b>Evolutionary Scale (now part of Biohub)</b></a>
+    , where I develop representation learning models for protein sequences and structures.
+    Previously I was the Head of Machine Learning at {` `}
       <a href="https://orbitalmaterials.com/" target="_blank" rel="noopener noreferrer"><b>Orbital Materials</b></a>
-      , where I lead our foundation model development for materials science.
-      Previously I was a Senior Research Engineer at the 
+      , where I led the development of foundation models for materials science.
+      Before that, I was a Senior Research Engineer at the 
       <a href="https://allenai.org/" target="_blank" rel="noopener noreferrer"> Allen Institute for Artificial Intelligence. </a>
     </>
   );

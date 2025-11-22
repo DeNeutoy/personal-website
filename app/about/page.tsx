@@ -7,7 +7,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'Head of ML at Orbital Materials',
+  description: 'Principal Scientist at Evolutionary Scale',
 };
 
 export default function AboutPage() {
@@ -19,10 +19,9 @@ export default function AboutPage() {
       </p>
       <div className="prose prose-neutral dark:prose-invert text-neutral-800 dark:text-neutral-200">
         <p>
-          I'm currently the Head of Machine Learning at {` `}
-          <a href="https://orbitalmaterials.com/" target="_blank" rel="noopener noreferrer"><b>Orbital Materials</b></a>
-          , where I
-          lead our foundation model development for materials science. 
+          I'm currently a Principal Scientist at {` `}
+          <a href="https://evolutionaryscale.ai/" target="_blank" rel="noopener noreferrer"><b>Evolutionary Scale (now part of Biohub)</b></a>
+          , where I develop representation learning models for protein sequences and structures.
         </p>
         <hr/>
         <p>
@@ -30,7 +29,7 @@ export default function AboutPage() {
           cooking, playing Go, making wooden tables and riding steel-framed bicycles. 
         </p>
         <p className="mb-8">
-          Outside of Orbital Materials, I occasionally advise for startups,
+          Outside of Evolutionaryscale, I occasionally advise for startups,
           helping companies improve their Machine Learning function.
         </p>
         <div className="flex flex-col gap-2 md:flex-row md:gap-2">

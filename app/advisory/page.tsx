@@ -54,13 +54,11 @@ export default function AdvisoryPage() {
 
         <h4>Machine Learning for the Hard Sciences</h4>
         <p>
+          Currently, I am a Principal Scientist at <a href="https://evolutionaryscale.ai/" target="_blank" rel="noopener noreferrer">Evolutionary Scale (now part of Biohub)</a>, where I develop representation learning models for protein sequences and structures.
+          Previously, I was the Head of Machine Learning at <a href="https://orbitalmaterials.com/" target="_blank" rel="noopener noreferrer">Orbital Materials</a>, where I led the development of foundation models for materials science.
           I have experience applying deep learning to the hard sciences, particularly molecular data and atomistic simulations.
-          My current role is leading the development of foundation models for materials science at <a href="https://orbitalmaterials.com/" target="_blank" rel="noopener noreferrer">Orbital Materials</a>.
           This work has included developing generative models for molecular design, 
           large scale data collection from quantum chemistry calculations and development of new neural network-based <a href="https://arxiv.org/abs/2410.22570" target="_blank" rel="noopener noreferrer">Universal Interatomic Potentials</a>.
-        </p>
-
-        <p>
           This experience crossing ML research software development, deep learning research and product focused ML has given me repeated exposure to the challenges of building successful ML applications and teams.
         </p>
 
