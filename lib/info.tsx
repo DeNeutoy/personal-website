@@ -12,17 +12,15 @@ export const about = () => {
     Previously I was the Head of Machine Learning at {` `}
       <a href="https://orbitalmaterials.com/" target="_blank" rel="noopener noreferrer"><b>Orbital Materials</b></a>
       , where I led the development of foundation models for materials science.
-      Before that, I was a Senior Research Engineer at the 
-      <a href="https://allenai.org/" target="_blank" rel="noopener noreferrer"> Allen Institute for Artificial Intelligence. </a>
     </>
   );
 };
 export const bio = () => {
   return (
     <>
-      Before switching to applying neural networks in the hard sciences, I worked on natural language processing. I cocreated{` `}
+      Before switching to applying neural networks in the hard sciences, I worked on natural language processing at the <a href="https://allenai.org/" target="_blank" rel="noopener noreferrer">Allen Institute for Artificial Intelligence</a>. I cocreated{` `}
       <a href="https://allennlp.org/" target="_blank" rel="noopener noreferrer"> <b> AllenNLP</b></a>
-      , a library for Natural Language Processing research, focused on neural networks. 
+      , a library for Natural Language Processing research, focused on neural networks.
       
       I also worked on
       <a href="https://arxiv.org/abs/1802.05365" target="_blank" rel="noopener noreferrer"> <b>Elmo (Embeddings from Language Models)</b></a>{` `}
