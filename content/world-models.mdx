@@ -1,0 +1,82 @@
+---
+title: 'World Models, Foundation Models and Partially Observed Environments'
+publishedAt: '2026-06-17'
+summary: 'World models, dynamics, and fidelity of observations in partially observed environments.'
+---
+
+World models and foundation models have become two terms du jour in machine learning. They are often used interchangeably, or as generic descriptors for "a big impressive model", which is a shame, because their definitions give rise to two orthogonal axes:
+
+- **Foundation model** is a claim about a model's *provenance and reuse*: it was trained on broad data at scale, and it can be adapted to many downstream tasks.
+- **World model** is a claim about a model's *internal state*: it represents the state of some system and the dynamics that govern how that state evolves, in a way that supports simulation, planning and counterfactual reasoning.
+
+The first is an economic and engineering category, whereas the second is an epistemic one. A model can be one, both, or neither.
+
+## Provenance and reuse
+
+The term "foundation model" was popularised by the [Stanford CRFM report](https://arxiv.org/abs/2108.07258) in 2021, defined roughly as "a model trained on broad data at scale that can be adapted to a wide range of downstream tasks". We can debate whether the introduction of this term was net useful, but regardless, it has caught on as the canonical name for a class of models. The emphasis is entirely on the *lifecycle* of the model:
+
+- **Scale and breadth** of pretraining data.
+- **Self-supervision** (or some other objective that doesn't require task-specific labels), so that pretraining can consume that breadth.
+- **Adaptability** - the same base model can be fine-tuned, prompted, or used as a feature extractor for many tasks.
+- **Emergence** - capabilities that weren't explicitly trained for fall out of training at scale.
+
+## Dynamics
+
+World models come from a different academic lineage: control and model-based reinforcement learning. Sutton's [Dyna](https://dl.acm.org/doi/10.1145/122344.122377), Ha and Schmidhuber's [World Models](https://arxiv.org/abs/1803.10122), and LeCun's [path-to-autonomous-intelligence](https://openreview.net/forum?id=BZ5a1r-kVsf) position paper all share a common core idea of learning a *transition function*: given the current state of the world and (optionally) an action, predict the next state.
+
+<center>
+$$\hat{s}_{t+1} = f_\theta(s_t, a_t)$$
+</center>
+
+Everything that makes a world model useful is derivative from this base objective. We would like to be able to run simulations - rolling the dynamics forward to imagine trajectories without interacting with the real environment. We would also like to be able to plan - search over actions by simulating their consequences. Finally, we would like to be able to reason about counterfactuals - "what would happen if I *did* this?"; making statements about the system's response to perturbations or interventions.
+
+The defining feature of world models is representing *how state evolves*, rather than just *what states look like*. This is why people argue about whether large video generators like [Genie](https://arxiv.org/abs/2402.15391) or Sora are "world models". Clearly these models are larger and broadly trained, the novelty in these models is that the rolled-out video frames respect the dynamics of the depicted world well enough to act as a simulator. Similarly, [LLMs as simulators](https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators) is really asking whether a foundation model has, as a byproduct, acquired a world model.
+
+## The \{world, foundation\} model grid
+
+Our world/foundation model definitions are orthogonal, which means we can place models on a plot with these terms as the axes. The two interesting combinations this gives us are the "off diagonals" of the grid. A hand-fit classical forcefield for a single protein structure is a world model - it models an energy landscape and lets you simulate dynamics - but it is the opposite of a foundation model. Similarly, CLIP, an extremely broadly trained foundation model, is not really a world model as it has no notion of state or dynamics.
+
+## Are folding models world models or foundation models?
+
+Protein structure prediction models - [AlphaFold2](https://www.nature.com/articles/s41586-021-03819-2) and [3](https://www.nature.com/articles/s41586-024-07487-w), [RoseTTAFold](https://www.science.org/doi/10.1126/science.abj8754), [ESMFold](https://www.science.org/doi/10.1126/science.ade2574), and the newer open all-atom diffusion models like [Boltz](https://www.biorxiv.org/content/10.1101/2024.11.19.624167) and Chai - all learn a **static map** from sequence + MSA to a folded endpoint. They typically do not support:
+
+- **Conformational ensembles:** They predict (close to) a single native structure, not the conformational ensemble of a protein's actual folded state. You can coax pseudo-ensembles out by subsampling the MSA, but these models were trained to reproduce the distribution of *solved PDB structures*, not a Boltzmann distribution.
+- **Explicit transition function:** There is no $s_{t+1}$ or notion of time. You cannot simulate what an antiboody CDR loop does over the next nanosecond.
+- **Faithful responses to intervention:** Folding models are notoriously unreliable at predicting mutation effects (ΔΔG, stability), because a point mutation often barely affects the predicted structure even when it is biophysically catastrophic.
+- **Physics:** They don't predict an energy or have conservative dynamics, and cannot serve as the force provider in a simulation.
+
+Folding models learn a direct distribution over the 3D structure of proteins conditionined on sequence information and importantly, a multiple sequence alignment (MSA), conveying a substantial amount of information about the evolutionary conservation of the protein. 
+
+## What about Neural Network Potentials?
+
+Whilst thinking about this, I found myself contrasting folding models with the class of models I have spent a lot of time on: neural network potentials (machine-learned interatomic potentials, MLIPs). An MLIP learns an energy function $E_\theta(r)$ over atomic configurations, and forces fall out as the negative gradient of the energy with respect to the positions:
+
+<center>
+$$\mathbf{F} = -\nabla_r E_\theta(r)$$
+</center>
+
+That energy function is a learned model of the local dynamics of the physical world, and it supports everything a world model should. You can simulate trajectories (molecular dynamics is just rolling the dynamics forward), sample over configurations, and ask genuine counterfactuals like perturbing an atom or changing the temperature, reading off how the energy and the dynamics respond. Unlike a folding model, it responds to intervention because it models a lower level of fidelity/abstraction.
+
+MLIPs are also becoming foundation models. Universal potentials like [Orb](https://arxiv.org/abs/2504.06231) and [UMA](https://arxiv.org/abs/2506.23971) are broadly pretrained on large, diverse datasets and reused on systems they never saw in training (in fact, their main application use case of accelerated molecular dynamics is exactly this). That is the most exciting region of the design space, and where I think scientific ML is heading, with one caveat.
+
+## Scientific domains have a partially observed environment
+
+A video world model has a strange luxury in that full trajectories (or simulations, or rollouts) are available by construction **and** we have both access and knowledge of the true underlying dynamics of the real world. For Genie/Sora, the pixels are the entire state, and as humans we can evaluate "success" on a perceptual basis - if the rollout looks right based on our understanding of the true dynamics.
+
+Neural network potentials (and to a lesser extent, folding models) have no such luxury because we so rarely observe the full, evolving state of the system, and the true underlying dynamics are not known. Even though it is a world model in the dynamics sense, it is a world model of a heavily abstracted world, assembled from partial observations in at least three ways:
+
+- **The state is coarse-grained.** An MLIP sees nuclear positions and atomic numbers. We model the Born–Oppenheimer potential energy surface, which already marginalises out the electrons, and we usually fix or ignore spin, charge and external fields.
+- **The supervision is itself a model.** Our labels come from DFT, with a chosen functional that is already an approximation of the true quantum mechanics. We are learning a surrogate of a surrogate; the "ground truth" is the theory's opinion about the world, not the world itself. A video model, by contrast, is trained on fully observed states.
+- **The configuration space is barely sampled.** The energy surface is astronomically high-dimensional, and our data clusters near equilibrium for a biased set of compositions. We rarely observe the reactive transition states, high-pressure phases and rare events, which are exactly the regions we want to extrapolate to in order to build a higher fidelity world model.
+
+Under the standard definition of a world model, a model categorisation is based on capturing system dynamics, not how much of the environment you get to see. Of course, this is related to how *useful* the resulting model is - hence the interest in combining the foundation model and world model categories to build models that are both broadly trained and useful for simulation and intervention.
+
+## What we ask of models
+
+A foundation model earns trust through *generalization that is anchored in its training distribution*. I want to be careful here, because "it only interpolates" is a lazy caricature: frontier LLMs clearly do compositional generalization, and there are credible cases of models solving genuinely novel problems - AlphaProof and AlphaGeometry on olympiad geometry problems, or some of the new Erdos number problem proofs are good examples. "Interpolation vs extrapolation" is also a slippery distinction once you remember that in high dimensions [essentially every test point is outside the convex hull of the training set](https://arxiv.org/abs/2110.09485).
+
+A world model earns trust through *fidelity of its dynamics under intervention*. This is a much stronger property, and much harder to validate, especially in environments where we do not have known underlying dynamics.
+
+When people ask whether a given scientific model is "a world model", I think what they usually want to know is which of these two kinds of trust they're allowed to extend to it.
+
+In scientific applications there is a further layer to keep in mind: our targets are not the world itself but noisy, approximate measurements of it, like a DFT functional standing in for the true quantum mechanics, or an NMR spectrum of a molecule. This aleatoric uncertainty is an additional confounder that must be accounted for when evaluating the dynamics of a world model - is the bias coming from a model based weakness, or is it inherent to the system? Overcoming these measurement errors with *multimodal* measurements is the frontier for scientific ML.
