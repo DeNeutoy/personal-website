@@ -24,7 +24,7 @@ export default function AdvisoryPage() {
         </ul>
 
         <p>
-         Subscription based support is available on a monthly retainer basis. 
+         Support is available on a monthly retainer basis. 
          Project-based support is also available depending on my availability and the scope of the project.
         </p>
 
