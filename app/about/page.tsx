@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import {
   GitHubIcon,
-  ArrowIcon,
+  LinkedInIcon,
   TwitterIcon,
 } from 'components/icons';
+import { bio } from 'lib/info';
 
 export const metadata: Metadata = {
   title: 'About',
@@ -13,15 +15,15 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <section>
-      <h1 className="font-bold text-3xl font-serif">About Me</h1>
-      <p className="my-5 text-neutral-800 dark:text-neutral-200">
-        Hey, I'm Mark.
-      </p>
       <div className="prose prose-neutral dark:prose-invert text-neutral-800 dark:text-neutral-200">
         <p>
           I'm currently a Principal Scientist at {` `}
           <a href="https://evolutionaryscale.ai/" target="_blank" rel="noopener noreferrer"><b>Evolutionary Scale (now part of Biohub)</b></a>
-          , where I develop representation learning models for protein sequences and structures.
+          , where I develop representation learning models for biological data.
+        </p>
+
+        <p className="my-5 max-w-[600px] text-neutral-800 dark:text-neutral-200">
+          {bio()}
         </p>
         <hr/>
         <p>
@@ -29,35 +31,38 @@ export default function AboutPage() {
           cooking, playing Go, making wooden tables and riding steel-framed bicycles. 
         </p>
         <p className="mb-8">
-          Outside of Evolutionaryscale, I occasionally advise for startups,
-          helping companies improve their Machine Learning function.
+          Outside of Evolutionary Scale, I occasionally advise startups on
+          machine learning and technical strategy. Interested in working with me? Learn about my{' '}
+          <Link href="/advisory">advisory work</Link>.
         </p>
-        <div className="flex flex-col gap-2 md:flex-row md:gap-2">
+        <div className="flex items-center justify-center gap-6 border-t border-neutral-200 pt-6 text-neutral-500 dark:border-neutral-800 dark:text-neutral-400 md:hidden [&_svg]:h-auto [&_svg]:w-8">
           <a
-            rel="noopener noreferrer"
-            target="_blank"
+            aria-label="Twitter"
+            className="no-underline transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
             href="https://twitter.com/markneumannnn"
-            className="flex w-full border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 no-underline items-center text-neutral-800 dark:text-neutral-200 hover:dark:bg-neutral-900 hover:bg-neutral-100 transition-all justify-between"
-          >
-            <div className="flex items-center">
-              <TwitterIcon />
-              <div className="ml-3">Twitter</div>
-            </div>
-            <ArrowIcon />
-          </a>
-          <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://github.com/deneutoy"
-            className="flex w-full border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 no-underline items-center text-neutral-800 dark:text-neutral-200 hover:dark:bg-neutral-900 hover:bg-neutral-100 transition-all justify-between"
           >
-            <div className="flex items-center">
-              <GitHubIcon />
-              <div className="ml-3">GitHub</div>
-            </div>
-            <ArrowIcon />
+            <TwitterIcon />
           </a>
-
+          <a
+            aria-label="LinkedIn"
+            className="no-underline transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+            href="https://www.linkedin.com/in/mark-neumann-aa3388ab/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <LinkedInIcon />
+          </a>
+          <a
+            aria-label="GitHub"
+            className="no-underline transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+            href="https://github.com/deneutoy"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <GitHubIcon />
+          </a>
         </div>
       </div>
     </section>

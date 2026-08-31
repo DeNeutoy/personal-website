@@ -9,14 +9,12 @@ export const metadata: Metadata = {
 export default function ProjectsPage() {
   return (
     <section>
-      <h1 className="font-bold text-3xl font-serif">Projects</h1>
-      <p className="my-5 text-neutral-800 dark:text-neutral-200">
-        A variety of other projects i've been involved with and websites i've
-        made.
+      <p className="mb-8 text-neutral-800 dark:text-neutral-200">
+        A variety of other projects/websites i've made.
       </p>
 
       <Link
-        className="flex flex-col space-y-1 mb-4 max-w-lg"
+        className="flex flex-col space-y-1 mb-4 max-w-2xl"
         href="https://readablerecipes.com"
         referrerPolicy="no-referrer"
         target="_blank"
@@ -28,18 +26,7 @@ export default function ProjectsPage() {
         </p>
       </Link>
       <Link
-        className="flex flex-col space-y-1 mb-4 max-w-lg"
-        href="https://albionsupperclub.com"
-        referrerPolicy="no-referrer"
-        target="_blank"
-      >
-        <h2 className="font-bold text-xl">The Albion Supper Club</h2>
-        <p className="my-5 text-neutral-800 dark:text-neutral-200">
-          A Seattle based supper club, where I cook English food for friends. Coming 2024. 
-        </p>
-      </Link>
-      <Link
-        className="flex flex-col space-y-1 mb-4 max-w-lg"
+        className="flex flex-col space-y-1 mb-4 max-w-2xl"
         href="https://deneutoy.github.io/savethenhs/"
         referrerPolicy="no-referrer"
         target="_blank"
@@ -50,7 +37,7 @@ export default function ProjectsPage() {
         </p>
       </Link>
       <Link
-        className="flex flex-col space-y-1 mb-4 max-w-lg"
+        className="flex flex-col space-y-1 mb-4 max-w-2xl"
         href="https://deneutoy.github.io/iclr/"
         referrerPolicy="no-referrer"
         target="_blank"
@@ -61,7 +48,7 @@ export default function ProjectsPage() {
         </p>
       </Link>
       <Link
-        className="flex flex-col space-y-1 mb-4 max-w-lg"
+        className="flex flex-col space-y-1 mb-4 max-w-2xl"
         href="https://deneutoy.github.io/best-rejected-papers/"
         referrerPolicy="no-referrer"
         target="_blank"
@@ -73,7 +60,7 @@ export default function ProjectsPage() {
       </Link>
 
       <Link
-        className="flex flex-col space-y-1 mb-4 max-w-lg"
+        className="flex flex-col space-y-1 mb-4 max-w-2xl"
         href="https://roundupmail.com"
         referrerPolicy="no-referrer"
         target="_blank"

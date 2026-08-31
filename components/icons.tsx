@@ -46,6 +46,22 @@ export function GitHubIcon() {
   );
 }
 
+export function LinkedInIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5.37 3.5A2.37 2.37 0 1 1 .63 3.5a2.37 2.37 0 0 1 4.74 0ZM.96 8h4.08v13H.96V8Zm6.72 0h3.91v1.78h.06c.54-1.03 1.88-2.12 3.87-2.12 4.14 0 4.9 2.72 4.9 6.27V21h-4.08v-6.27c0-1.5-.03-3.42-2.09-3.42-2.09 0-2.41 1.63-2.41 3.31V21H7.68V8Z"
+      />
+    </svg>
+  );
+}
+
 export function ViewsIcon() {
   return (
     <svg

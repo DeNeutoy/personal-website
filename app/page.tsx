@@ -1,66 +1,65 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import {
-  ArrowIcon,
+  GitHubIcon,
+  LinkedInIcon,
+  TwitterIcon,
 } from 'components/icons';
-import { name, about, bio, avatar } from 'lib/info';
+import { name, about, avatar } from 'lib/info';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
 
   return (
-    <section>
-      <div className="flex items-between md:items-center my-6">
-      <h1 className="font-bold text-3xl font-serif mr-12">{name}</h1>
-
+    <section className="flex flex-col md:flex-row-reverse md:items-center md:justify-end md:gap-16">
+      <div className="my-6 flex shrink-0 flex-col items-center gap-2 md:my-0">
         <Image
           alt={name}
           className="rounded-full"
           src={avatar}
           placeholder="blur"
-          width={100}
+          width={200}
           priority
         />
+        <h1 className="text-center text-3xl font-bold leading-tight font-serif">
+          <span className="block">Mark Neumann</span>
+        </h1>
+        <div className="mt-1 flex items-center gap-5 text-neutral-900 dark:text-neutral-100">
+          <a
+            aria-label="Twitter"
+            className="transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+            href="https://twitter.com/markneumannnn"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <TwitterIcon />
+          </a>
+          <a
+            aria-label="LinkedIn"
+            className="transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+            href="https://www.linkedin.com/in/mark-neumann-aa3388ab/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <LinkedInIcon />
+          </a>
+          <a
+            aria-label="GitHub"
+            className="transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+            href="https://github.com/deneutoy"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <GitHubIcon />
+          </a>
+        </div>
       </div>
 
-      <p className="my-5 max-w-[600px] text-neutral-800 dark:text-neutral-200">
-        {about()}
-      </p>
-
-      <p className="my-5 max-w-[600px] text-neutral-800 dark:text-neutral-200">
-        {bio()}
-      </p>
-      <ul className="flex flex-col md:flex-row mt-8 space-x-0 md:space-x-4 space-y-2 md:space-y-0 font-sm text-neutral-500 dark:text-neutral-400">
-        <li>
-          <a
-            className="flex items-center hover:text-neutral-700 dark:hover:text-neutral-200 transition-all"
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://twitter.com/markneumannnn"
-          >
-            <ArrowIcon />
-            <p className="h-7">Follow me on Twitter</p>
-          </a>
-        </li>
-        <li>
-          <Link href="/blog" className="flex items-center hover:text-neutral-700 dark:hover:text-neutral-200 transition-all" >
-            <ArrowIcon />
-            <p className="h-7">Read my writing</p>
-          </Link>
-        </li>
-        <li>
-          <a
-            className="flex items-center hover:text-neutral-700 dark:hover:text-neutral-200 transition-all"
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://github.com/deneutoy"
-          >
-            <ArrowIcon />
-            <p className="h-7">See my work</p>
-          </a>
-        </li>
-      </ul>
+      <div className="max-w-[520px]">
+        <p className="my-5 text-neutral-800 dark:text-neutral-200">
+          {about()}
+        </p>
+      </div>
     </section>
   );
 }
