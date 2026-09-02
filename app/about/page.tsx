@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   GitHubIcon,
@@ -53,6 +54,21 @@ export default function AboutPage() {
             target="_blank"
           >
             <LinkedInIcon />
+          </a>
+          <a
+            aria-label="Google Scholar"
+            className="no-underline transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+            href="https://scholar.google.com/citations?user=vlrP560AAAAJ&hl=en"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <Image
+              alt=""
+              className="h-9 w-9 dark:invert"
+              height={36}
+              src="/icons8-google-scholar.svg"
+              width={36}
+            />
           </a>
           <a
             aria-label="GitHub"

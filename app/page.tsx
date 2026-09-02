@@ -44,6 +44,21 @@ export default async function HomePage() {
             <LinkedInIcon />
           </a>
           <a
+            aria-label="Google Scholar"
+            className="transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
+            href="https://scholar.google.com/citations?user=vlrP560AAAAJ&hl=en"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <Image
+              alt=""
+              className="h-6 w-6 dark:invert"
+              height={24}
+              src="/google-scholar.svg"
+              width={24}
+            />
+          </a>
+          <a
             aria-label="GitHub"
             className="transition-colors hover:text-neutral-800 dark:hover:text-neutral-200"
             href="https://github.com/deneutoy"
